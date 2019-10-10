@@ -60,9 +60,9 @@
   </Target>
   -->
   <ItemGroup Condition=" '$(Configuration)' != 'ReleaseLinux' ">
-      <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-          <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.1016.290\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
-      </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.1016.290\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BruTile, Version=0.18.1.0, Culture=neutral, PublicKeyToken=null">
@@ -242,12 +242,6 @@
     <Compile Include="..\SharedAssemblyVersion.cs">
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)' != 'ReleaseLinux' ">
-    <ProjectReference Include="..\SharpMap.SqlServerSpatialObjects\SharpMap.SqlServerSpatialObjects.csproj">
-      <Project>{6D681045-8EF1-44EA-A19D-C7A63A6D0F76}</Project>
-      <Name>SharpMap.SqlServerSpatialObjects</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpMap.Data.Providers.GeoPackage\SharpMap.Data.Providers.GeoPackage.csproj">

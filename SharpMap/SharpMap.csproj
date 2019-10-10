@@ -22,7 +22,7 @@
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
     <PackageReference Include="GeoAPI.CoordinateSystems" Version="1.7.5" />
-    <PackageReference Include="NetTopologySuite.Core" Version="1.15.1" />
+    <PackageReference Include="NetTopologySuite.Core" Version="1.15.3" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
@@ -37,15 +37,11 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' != 'ReleaseLinux' AND '$(TargetFramework)' == 'net40-client' ">
     <Message Text="$(SolutionDir)SharedAssemblyVersion.cs exists: $([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) " />
-    <Message Text="$(SolutionDir)SharedAssemblyVersion.cs: $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) " 
-             Condition=" $([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) "/>
+    <Message Text="$(SolutionDir)SharedAssemblyVersion.cs: $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) " Condition=" $([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) " />
     <Message Text="$(SolutionDir)SharpMap.Common.props   : $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharpMap.Common.props').Ticks)" />
-    <Message Text="Condition: $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) &lt; $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharpMap.Common.props').Ticks)" 
-             Condition=" $([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) "/>
+    <Message Text="Condition: $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) &lt; $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharpMap.Common.props').Ticks)" Condition=" $([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) " />
 
-    <Exec Condition=" !$([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) OR 
-          $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) &lt; $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharpMap.Common.props').Ticks) "
-        Command="$(SolutionDir.SubString(0, 2))&#xD;&#xA;cd &quot;$(SolutionDir)&quot;&#xD;&#xA;&quot;$(MSBuildBinPath)\msbuild&quot; SharpMap.targets /t:Version&#xD;&#xA;cd &quot;$(ProjectDir)&quot;" />
+    <Exec Condition=" !$([System.IO.File]::Exists('$(SolutionDir)SharedAssemblyVersion.cs')) OR &#xD;&#xA;          $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharedAssemblyVersion.cs').Ticks) &lt; $([System.IO.File]::GetLastWriteTime('$(SolutionDir)SharpMap.Common.props').Ticks) " Command="$(SolutionDir.SubString(0, 2))&#xD;&#xA;cd &quot;$(SolutionDir)&quot;&#xD;&#xA;&quot;$(MSBuildBinPath)\msbuild&quot; SharpMap.targets /t:Version&#xD;&#xA;cd &quot;$(ProjectDir)&quot;" />
   </Target>
 
 </Project>

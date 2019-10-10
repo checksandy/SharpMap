@@ -546,10 +546,6 @@
       <Project>{47F790C2-6DC0-4A09-9026-FC81A09FD6A3}</Project>
       <Name>SharpMap.Layers.HeatLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\SharpMap.SqlServerSpatialObjects\SharpMap.SqlServerSpatialObjects.csproj">
-      <Project>{6d681045-8ef1-44ea-a19d-c7a63a6d0f76}</Project>
-      <Name>SharpMap.SqlServerSpatialObjects</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\SharpMap\SharpMap.csproj">
       <Project>{C83777FC-AABB-47D9-911F-D76255D4D541}</Project>
       <Name>SharpMap</Name>

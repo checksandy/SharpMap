@@ -108,8 +108,8 @@ namespace WinFormSamples.Samples
             spatialLyr = new SharpMap.Layers.VectorLayer("Spatial");
             if (optDataProviderWKB.Checked)
                 spatialLyr.DataSource = new SqlServer2008(ConnectionString, spatialTable, geomColumn, "Id", geomType, 4326, SqlServer2008ExtentsMode.QueryIndividualFeatures);
-            else
-                spatialLyr.DataSource = new SqlServer2008Ex(ConnectionString, spatialTable, geomColumn, "Id", geomType, 4326, SqlServer2008ExtentsMode.QueryIndividualFeatures);
+            //else
+            //    spatialLyr.DataSource = new SqlServer2008Ex(ConnectionString, spatialTable, geomColumn, "Id", geomType, 4326, SqlServer2008ExtentsMode.QueryIndividualFeatures);
 
             spatialLyr.SRID = spatialLyr.DataSource.SRID;
             spatialLyr.TargetSRID = 3857;
@@ -166,13 +166,13 @@ namespace WinFormSamples.Samples
             var sqlDP = GetSqlServerDataProvider();
             if (sqlDP == null) return;
 
-            if (sqlDP is SqlServer2008Ex)
-                if (sender != null && !chkSpatialValidate.Checked)
-                {
-                    chkSpatialValidate.Checked = true;
-                    MessageBox.Show("Validate is cannot be disabled for Native Types",
-                        "Validate Geometries", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+            //if (sqlDP is SqlServer2008Ex)
+            //    if (sender != null && !chkSpatialValidate.Checked)
+            //    {
+            //        chkSpatialValidate.Checked = true;
+            //        MessageBox.Show("Validate is cannot be disabled for Native Types",
+            //            "Validate Geometries", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    }
 
             sqlDP.ValidateGeometries = chkSpatialValidate.Checked;
 
