@@ -136,16 +136,21 @@ namespace SharpMap.Utilities
             double mapHeight, double pixelWidth, double pixelHeight)
         {
             var coords = new Coordinate[points.Length];
-            if (worldCenter.IsEmpty() || double.IsNaN(mapHeight))
-                for (var i = 0; i < points.Length; i++)
-                    coords[i] = new Coordinate(0, 0);
-            else
+            try
             {
-                var ul = new Coordinate(worldCenter.X - mapZoom * .5,worldCenter.Y + mapHeight * .5);
-                for (var i = 0; i < points.Length; i++)
-                    coords[i] = new Coordinate(ul.X + points[i].X * pixelWidth,ul.Y - points[i].Y * pixelHeight);
+                if (worldCenter.IsEmpty() || double.IsNaN(mapHeight))
+                    for (var i = 0; i < points.Length; i++)
+                        coords[i] = new Coordinate(0, 0);
+                else
+                {
+                    var ul = new Coordinate(worldCenter.X - mapZoom * .5, worldCenter.Y + mapHeight * .5);
+                    for (var i = 0; i < points.Length; i++)
+                        coords[i] = new Coordinate(ul.X + points[i].X * pixelWidth, ul.Y - points[i].Y * pixelHeight);
+                }
+                
             }
-
+            catch
+            {}
             return coords;
         }
 
