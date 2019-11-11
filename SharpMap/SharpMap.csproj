@@ -33,6 +33,9 @@
 
   <PropertyGroup>
       <DriveSeperator>$(SolutionDir.SubString(1,1))</DriveSeperator>
+      <ApplicationIcon />
+      <OutputType>Library</OutputType>
+      <StartupObject />
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' != 'ReleaseLinux' AND '$(TargetFramework)' == 'net40-client' ">

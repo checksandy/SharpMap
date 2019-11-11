@@ -103,6 +103,7 @@ namespace SharpMap.Layers
 
         private string _layerName;
         private string _layerTitle;
+        private string _Tag;
         private IStyle _style;
         private int _srid = -1;
         private int? _targetSrid;
@@ -266,6 +267,15 @@ namespace SharpMap.Layers
         {
             get { return _layerName; }
             set { _layerName = value; }
+        }
+
+        /// <summary>
+        /// Tag of layer
+        /// </summary>
+        public string Tag
+        {
+            get { return _Tag; }
+            set { _Tag = value; }
         }
 
         /// <summary>

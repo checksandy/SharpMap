@@ -489,7 +489,7 @@ namespace SharpMap.Forms.ImageGenerator
 
                     break;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     _logger.Warn($"{counter}. merge at {rectangle} failed.");
                     if (counter == 3)

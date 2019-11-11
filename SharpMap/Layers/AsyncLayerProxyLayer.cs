@@ -139,6 +139,16 @@ namespace SharpMap.Layers
             set { _baseLayer.LayerName = value; }
         }
 
+
+        /// <summary>
+        /// Tag of layer
+        /// </summary>
+        string ILayer.Tag
+        {
+            get { return _baseLayer.Tag; }
+            set { _baseLayer.Tag = value; }
+        }
+
         /// <summary>
         /// Gets the boundingbox of the entire layer
         /// </summary>

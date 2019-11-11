@@ -136,6 +136,15 @@ namespace SharpMap.Layers
             set { _baseLayer.LayerTitle = value; }
         }
 
+        /// <summary>
+        /// Tag of layer
+        /// </summary>
+        string ILayer.Tag
+        {
+            get { return _baseLayer.Tag; }
+            set { _baseLayer.Tag = value; }
+        }
+
         string ILayer.LayerName
         {
             get { return _baseLayer.LayerName; }

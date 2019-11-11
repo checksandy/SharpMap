@@ -334,6 +334,7 @@ namespace SharpMap.Layers
             clonedGroup.MinVisible = MinVisible;
             clonedGroup.Proj4Projection = Proj4Projection;
             clonedGroup.Style = Style;
+            clonedGroup.Tag = Tag;
             // setting SRIDs resets Transformations
             clonedGroup.SRID = SRID;
             clonedGroup.TargetSRID = TargetSRID;

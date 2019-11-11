@@ -52,6 +52,11 @@ namespace SharpMap.Layers
         string LayerName { get; set; }
 
         /// <summary>
+        /// Tag associated with layer
+        /// </summary>
+        string Tag { get; set; }
+
+        /// <summary>
         /// Optional title of layer. It will be used for services like WMS where both Name and Title are supported.
         /// </summary>
         string LayerTitle { get; set; }
