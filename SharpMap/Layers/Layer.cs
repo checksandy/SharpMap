@@ -21,7 +21,7 @@ using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
 using SharpMap.Base;
 using SharpMap.Styles;
-
+using System.ComponentModel;
 namespace SharpMap.Layers
 {
     /// <summary>
@@ -263,6 +263,7 @@ namespace SharpMap.Layers
         /// <summary>
         /// Gets or sets the name of the layer
         /// </summary>
+        [DisplayName("Layer Name"),Browsable(true)]
         public string LayerName
         {
             get { return _layerName; }
@@ -272,6 +273,7 @@ namespace SharpMap.Layers
         /// <summary>
         /// Tag of layer
         /// </summary>
+        [Browsable(false)]
         public string Tag
         {
             get { return _Tag; }
@@ -281,6 +283,7 @@ namespace SharpMap.Layers
         /// <summary>
         /// Gets or sets the title of the layer
         /// </summary>
+        [DisplayName("Title"), Browsable(true)]
         public string LayerTitle
         {
             get { return _layerTitle; }

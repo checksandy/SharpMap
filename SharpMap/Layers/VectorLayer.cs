@@ -482,12 +482,14 @@ namespace SharpMap.Layers
             switch (geometryType)
             {
                 case OgcGeometryType.Polygon:
-                    if (style.EnableOutline)
-                        VectorRenderer.DrawPolygon(g, (IPolygon)feature, style.Fill, style.Outline, _clippingEnabled,
-                                                   map);
-                    else
-                        VectorRenderer.DrawPolygon(g, (IPolygon)feature, style.Fill, null, _clippingEnabled, map);
-                    break;
+                    {
+                        if (style.EnableOutline)
+                            VectorRenderer.DrawPolygon(g, (IPolygon)feature, style.Fill, style.Outline, _clippingEnabled,
+                                                       map);
+                        else
+                            VectorRenderer.DrawPolygon(g, (IPolygon)feature, style.Fill, null, _clippingEnabled, map);
+                        break;
+                    }
                 case OgcGeometryType.MultiPolygon:
                     if (style.EnableOutline)
                         VectorRenderer.DrawMultiPolygon(g, (IMultiPolygon)feature, style.Fill, style.Outline,
@@ -519,7 +521,7 @@ namespace SharpMap.Layers
                         return;
                     }
 
-                    if (style.Symbol != null || style.PointColor == null)
+                    if ((style.Symbol != null || style.PointColor == null) && (style.UseSymbol))
                     {
                         VectorRenderer.DrawPoint(g, (IPoint)feature, style.Symbol, style.SymbolScale, style.SymbolOffset,
                                                  style.SymbolRotation, map);
@@ -533,7 +535,7 @@ namespace SharpMap.Layers
                     {
                         VectorRenderer.DrawMultiPoint(style.PointSymbolizer, g, (IMultiPoint)feature, map);
                     }
-                    if (style.Symbol != null || style.PointColor == null)
+                    if ((style.Symbol != null || style.PointColor == null) && (style.UseSymbol))
                     {
                         VectorRenderer.DrawMultiPoint(g, (IMultiPoint)feature, style.Symbol, style.SymbolScale,
                                                   style.SymbolOffset, style.SymbolRotation, map);

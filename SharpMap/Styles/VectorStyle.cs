@@ -22,6 +22,8 @@ using System.Reflection;
 using GeoAPI.Geometries;
 using SharpMap.Rendering.Symbolizer;
 using Common.Logging;
+using System.ComponentModel;
+
 #if NETSTANDARD2_0
 using SmColor = SharpMap.Drawing.Color;
 using Color = System.Drawing.Color;
@@ -125,46 +127,188 @@ namespace SharpMap.Styles
         /// </remarks>
         public VectorStyle()
         {
-            Outline = new Pen(Color.Black, 1);
-            Line = new Pen(Color.Black, 1);
-            Fill = new SolidBrush (Color.FromArgb(192, Color.Black));
+            _transparency = _rnd.Next(67, 256);
+            _color = CreateRandomKnownColor(255);
+            _linewidth = 1f;
+            _outlinewidth = 1f;
+            
+            Outline = new Pen(_color, _outlinewidth);
+            //Line = new Pen(_color, 1);
+            Fill = new SolidBrush (_color);
             EnableOutline = false;
             SymbolScale = 1f;
-            PointColor = new SolidBrush(Color.Red);
+            PointColor = new SolidBrush(_color);
             PointSize = 10f;
             LineOffset = 0;
+
+            _bgcolor = CreateRandomKnownColor(255);
+            _polgonfilltype = 0;
+            _hatchstyle = HatchStyle.Horizontal;
+            _gradientp1 = new Point(0, 0);
+            _gradientp2 = new Point(0, 10);
         }
 
 #region Properties
-
+        public enum PolyFillStyle
+        {
+            Solid=0,
+            Hatch=1,
+            Gradient=2
+        }
         private PointF _symbolOffset;
         private float _symbolRotation;
         private float _symbolScale;
+        private bool _usesymbol;
 
         private float _pointSize;
         private Brush _pointBrush;
 
+        private int _transparency;
+        private Color _outlinecolor;
+        private float _outlinewidth;
+        private Color _color;
+        private float _linewidth;
+
+        private PolyFillStyle _polgonfilltype;
+        private Color _bgcolor;
+        private HatchStyle _hatchstyle;
+        private Point _gradientp1;
+        private Point _gradientp2;
+
+        /// <summary>
+        /// BG Fill Color
+        /// </summary>
+        [Category("Polygon"),DisplayName("Background Color"),Description("Specify Background Color for Polygon"),Browsable(true)]
+        public Color BGColor
+        {
+            get {return _bgcolor; }
+            set { _bgcolor=value; }
+        }
+
+        /// <summary>
+        /// Fill Type
+        /// </summary>
+        [Category("Polygon"), DisplayName("Fill Type"), Description("Specify Fill Type for Polygon"), Browsable(true)]
+        public PolyFillStyle FillType
+        {
+            get { return _polgonfilltype; }
+            set { _polgonfilltype = value; }
+        }
+
+        /// <summary>
+        /// Hatch Style
+        /// </summary>
+        [Category("Polygon"), DisplayName("Hatch Style"), Description("Specify Hatch Style for Polygon"), Browsable(true)]
+        public HatchStyle HStyle
+        {
+            get { return _hatchstyle; }
+            set { _hatchstyle = value; }
+        }
+
+
+        /// <summary>
+        /// Gradient Point 1
+        /// </summary>
+        [Category("Polygon"), DisplayName("Gradient Point 1"), Description("Gradient Point 1 Location"), Browsable(true)]
+        public Point GradientPoint1
+        {
+            get { return _gradientp1; }
+            set { _gradientp1 = value; }
+        }
+
+        /// <summary>
+        /// Gradient Point 2
+        /// </summary>
+        [Category("Polygon"), DisplayName("Gradient Point 2"), Description("Gradient Point 2 Location"), Browsable(true)]
+        public Point GradientPoint2
+        {
+            get { return _gradientp2; }
+            set { _gradientp2 = value; }
+        }
+
         /// <summary>
         /// Linestyle for line geometries
         /// </summary>
+        [Browsable(false)]
         public Pen Line
         {
-            get { return _lineStyle; }
+            get { return new Pen(Color.FromArgb(_transparency,_color.R,_color.G,_color.B), _linewidth); }
             set { _lineStyle = value; }
+        }
+
+        /// <summary>
+        /// Color for Outline
+        /// </summary>
+        [Category("General")]
+        [DisplayName("Color")]
+        [Description("Specify Fore Color to use")]
+        [Browsable(true)]
+        public Color Color
+        {
+            get { return _color; }
+            set { _color = value; }
+        }
+
+        /// <summary>
+        /// Color for Outline
+        /// </summary>
+        [Category("General")]
+        [DisplayName("Outline Color")]
+        [Description("Specify Color to use for outline")]
+        [Browsable(true)]
+        public Color OutlineColor
+        {
+            get { return _outlinecolor; }
+            set { _outlinecolor = value; }
+        }
+
+        /// <summary>
+        /// Tranparency
+        /// </summary>
+        [Category("General")]
+        [DisplayName("Tranparency")]
+        [Description("Specify Transparency from 0 to 255")]
+        [Browsable(true)]
+        public int Transparency
+        {
+            get { return _transparency; }
+            set
+            {
+                if (value < 0) value = 0;
+                if (value > 255) value = 255;
+                _transparency = value;
+            }
+        }
+
+        /// <summary>
+        /// Outline Width
+        /// </summary>
+        [Category("General")]
+        [DisplayName("Outline Width")]
+        [Description("Specify Width for outline")]
+        [Browsable(true)]
+        public float OutlineWidth
+        {
+            get { return _outlinewidth; }
+            set { _outlinewidth = value; }
         }
 
         /// <summary>
         /// Outline style for line and polygon geometries
         /// </summary>
+        [Browsable(false)]
         public Pen Outline
         {
-            get { return _outlineStyle; }
+            get { return new Pen(_outlinecolor,_outlinewidth); }
             set { _outlineStyle = value; }
         }
 
         /// <summary>
         /// Specified whether the objects are rendered with or without outlining
         /// </summary>
+        [Category("General")]
+        [DisplayName("Enable Outline")]
+        [Description("Use for line and polygon objects to display outline")]
         public bool EnableOutline
         {
             get { return _outline; }
@@ -172,26 +316,60 @@ namespace SharpMap.Styles
         }
 
         /// <summary>
+        /// Specified whether the objects are rendered with or without outlining
+        /// </summary>
+        [Category("Line")]
+        [DisplayName("Width")]
+        [Description("Use for line Width")]
+        public float LineWidth
+        {
+            get { return _linewidth; }
+            set { _linewidth = value; }
+        }
+
+
+        /// <summary>
         /// Fillstyle for Polygon geometries
         /// </summary>
+        [Browsable(false)]
         public Brush Fill
         {
-            get { return _fillStyle; }
+            get
+            {
+                switch (FillType)
+                {
+                    case PolyFillStyle.Solid:
+                        _fillStyle = new SolidBrush(Color.FromArgb(_transparency, _color.R, _color.G, _color.B));
+                        break;
+                    case PolyFillStyle.Hatch:
+                        _fillStyle = new HatchBrush(_hatchstyle,_color, Color.FromArgb(_transparency, _bgcolor.R, _bgcolor.G, _bgcolor.B));
+                        break;
+                    case PolyFillStyle.Gradient:
+                        Fill = new LinearGradientBrush(_gradientp1, _gradientp2, Color.FromArgb(_transparency, _color.R, _color.G, _color.B), Color.FromArgb(_transparency, _bgcolor.R, _bgcolor.G, _bgcolor.B));
+                        break;
+                }
+                return _fillStyle;
+            }
             set { _fillStyle = value; }
         }
 
         /// <summary>
         /// Fillstyle for Point geometries (will be used if no Symbol is set)
         /// </summary>
+        [Browsable(false)]
         public Brush PointColor
         {
-            get { return _pointBrush; }
+            get { return new SolidBrush(Color.FromArgb(_transparency,_color.R,_color.G,_color.B)); }
             set { _pointBrush = value; }
         }
 
         /// <summary>
         /// Size for Point geometries (if drawn with PointColor), will not have affect for Points drawn with Symbol
         /// </summary>
+        /// 
+        [Category("Point")]
+        [DisplayName("Point Size")]
+        [Description("Specify Point Size")]
         public float PointSize
         {
             get { return _pointSize; }
@@ -201,6 +379,9 @@ namespace SharpMap.Styles
         /// <summary>
         /// Symbol used for rendering points
         /// </summary>
+        [Category("Point")]
+        [DisplayName("Symbol Name")]
+        [Description("Specify Symbol Name")]
         public Image Symbol
         {
             get { return _symbol; }
@@ -213,6 +394,9 @@ namespace SharpMap.Styles
         /// <remarks>
         /// Setting the symbolscale to '2.0' doubles the size of the symbol, where a scale of 0.5 makes the scale half the size of the original image
         /// </remarks>
+        [Category("Point")]
+        [DisplayName("Symbol Scale")]
+        [Description("Specify Symbol Scale")]
         public float SymbolScale
         {
             get { return _symbolScale; }
@@ -225,6 +409,7 @@ namespace SharpMap.Styles
         /// <remarks>
         /// The symbol offset is scaled with the <see cref="SymbolScale"/> property and refers to the offset af <see cref="SymbolScale"/>=1.0.
         /// </remarks>
+        [Browsable(false)]
         public PointF SymbolOffset
         {
             get { return _symbolOffset; }
@@ -234,10 +419,26 @@ namespace SharpMap.Styles
         /// <summary>
         /// Gets or sets the rotation of the symbol in degrees (clockwise is positive)
         /// </summary>
+        [Category("Point")]
+        [DisplayName("Symbol Rotation")]
+        [Description("Specify Symbol Rotation")]
         public float SymbolRotation
         {
             get { return _symbolRotation; }
             set { _symbolRotation = value; }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the rotation of the symbol in degrees (clockwise is positive)
+        /// </summary>
+        [Category("Point")]
+        [DisplayName("Use Symbol")]
+        [Description("Use Symbol")]
+        public bool UseSymbol
+        {
+            get { return _usesymbol; }
+            set { _usesymbol = value; }
         }
 
         /// <summary>
@@ -247,6 +448,7 @@ namespace SharpMap.Styles
         /// A positive value offsets the line to the right
         /// A negative value offsets to the left
         /// </remarks>
+        [Category("Line"),DisplayName("Line Offset"),Description("Specify Line Offset")]
         public float LineOffset
         {
             get { return _lineOffset; }
@@ -257,18 +459,21 @@ namespace SharpMap.Styles
         /// Gets or sets the symbolizer for puntal geometries
         /// </summary>
         /// <remarks>Setting this property will lead to ignorance towards all <see cref="IPuntal"/> related style settings</remarks>
+        [Browsable(false)]
         public IPointSymbolizer PointSymbolizer { get; set; }
 
         /// <summary>
         /// Gets or sets the symbolizer for lineal geometries
         /// </summary>
         /// <remarks>Setting this property will lead to ignorance towards all <see cref="ILineal"/> related style settings</remarks>
+        [Browsable(false)]
         public ILineSymbolizer LineSymbolizer { get; set; }
 
         /// <summary>
         /// Gets or sets the symbolizer for polygonal geometries
         /// </summary>
         /// <remarks>Setting this property will lead to ignorance towards all <see cref="IPolygonal"/> related style settings</remarks>
+        [Browsable(false)]
         public IPolygonSymbolizer PolygonSymbolizer { get; set; }
 
 #endregion
@@ -312,6 +517,8 @@ namespace SharpMap.Styles
                 _symbol.Dispose();
                 _symbol = null;
             }
+
+
             base.ReleaseManagedResources();
         }
 
