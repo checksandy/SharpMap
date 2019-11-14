@@ -1568,6 +1568,47 @@ namespace SharpMap.Forms
 
                 _orgScale = _map.Zoom;
             }
+            else if (e.Button==MouseButtons.Right)
+            {
+                if (_activeTool == Tools.DrawPolygon)
+                {
+                    if (GeometryDefined != null)
+                    {
+                        if (_pointArray!=null)
+                        {
+                            if (_pointArray.Count > 3)
+                            {
+                                int remI = _pointArray.Count - 1;
+                                _pointArray.RemoveAt(remI);
+                                var cl = new NetTopologySuite.Geometries.CoordinateList(_pointArray, false);
+                                cl.CloseRing();
+                                GeometryDefined(Map.Factory.CreatePolygon(Map.Factory.CreateLinearRing(NetTopologySuite.Geometries.CoordinateArrays.AtLeastNCoordinatesOrNothing(4, cl.ToCoordinateArray())), null));
+                            }
+                        }
+                    }
+                    _pointArray = null;
+                    //lGeomContinue = true;
+                }
+                else if (_activeTool == Tools.DrawLine)
+                {
+                    if (GeometryDefined != null)
+                    {
+                        if (_pointArray != null)
+                        {
+                            if (_pointArray.Count > 2)
+                            {
+                                int remI = _pointArray.Count - 1;
+                                _pointArray.RemoveAt(remI);
+                                var cl = new NetTopologySuite.Geometries.CoordinateList(_pointArray, false);
+                                GeometryDefined(Map.Factory.CreateLineString(NetTopologySuite.Geometries.CoordinateArrays.AtLeastNCoordinatesOrNothing(2, cl.ToCoordinateArray())));
+                            }
+                        }
+                    }
+                    _pointArray = null;
+                    //lGeomContinue = true;
+                }
+
+            }
         }
 
         //private bool ActionCheck(object sender, EventArgs e, Action<object, EventArgs> baseFunction, out Coordinate point,
@@ -2103,7 +2144,7 @@ namespace SharpMap.Forms
                 _logger.Error(ee);
             }
         }
-
+        bool lGeomContinue = false;
         /// <summary>
         /// Invokes the <see cref="E:System.Windows.Forms.Control.MouseUp"/>-event.
         /// </summary>
@@ -2367,16 +2408,23 @@ namespace SharpMap.Forms
                 else if (_activeTool == Tools.DrawPolygon || _activeTool == Tools.DrawLine)
                 {
                     //pointArray = null;
-                    if (_pointArray == null)
+                    if (lGeomContinue)
                     {
-                        _pointArray = new List<Coordinate>(2);
-                        _pointArray.Add(Map.ImageToWorld(e.Location));
-                        _pointArray.Add(Map.ImageToWorld(e.Location));
+                        lGeomContinue = false;
                     }
                     else
                     {
-                        //var temp = new Coordinate[_pointArray.Count + 2];
-                        _pointArray.Add(Map.ImageToWorld(e.Location));
+                        if (_pointArray == null)
+                        {
+                            _pointArray = new List<Coordinate>(2);
+                            _pointArray.Add(Map.ImageToWorld(e.Location));
+                            _pointArray.Add(Map.ImageToWorld(e.Location));
+                        }
+                        else
+                        {
+                            //var temp = new Coordinate[_pointArray.Count + 2];
+                            _pointArray.Add(Map.ImageToWorld(e.Location));
+                        }
                     }
                 }
             }
@@ -2472,7 +2520,9 @@ namespace SharpMap.Forms
                     cl.CloseRing();
                     GeometryDefined(Map.Factory.CreatePolygon(Map.Factory.CreateLinearRing(NetTopologySuite.Geometries.CoordinateArrays.AtLeastNCoordinatesOrNothing(4, cl.ToCoordinateArray())), null));
                 }
-                ActiveTool = Tools.None;
+                //ActiveTool = Tools.None;
+                _pointArray = null;
+                lGeomContinue = true;
             }
 
             else if (_activeTool == Tools.DrawLine)
@@ -2482,7 +2532,9 @@ namespace SharpMap.Forms
                     var cl = new NetTopologySuite.Geometries.CoordinateList(_pointArray, false);
                     GeometryDefined(Map.Factory.CreateLineString(NetTopologySuite.Geometries.CoordinateArrays.AtLeastNCoordinatesOrNothing(2, cl.ToCoordinateArray())));
                 }
-                ActiveTool = Tools.None;
+                //ActiveTool = Tools.None;
+                _pointArray = null;
+                lGeomContinue = true;
             }
         }
 

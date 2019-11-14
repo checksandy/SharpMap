@@ -101,7 +101,14 @@
     <Compile Include="Forms\ToolBar\MapZoomToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\Tools\DistanceMeasureTool.cs" />
     <Compile Include="Forms\Tools\FeatureEditorTool.cs" />
+    <Compile Include="Forms\Tools\frm_Distance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Tools\frm_Distance.Designer.cs">
+      <DependentUpon>frm_Distance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tools\IMapTool.cs" />
     <Compile Include="Forms\Tools\MapTool.cs" />
     <Compile Include="Forms\WktGeometryCreator.cs">
@@ -122,6 +129,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ToolBar\MapZoomToolStrip.resx">
       <DependentUpon>MapZoomToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Tools\frm_Distance.resx">
+      <DependentUpon>frm_Distance.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WktGeometryCreator.resx">
       <DependentUpon>WktGeometryCreator.cs</DependentUpon>
@@ -571,6 +581,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\..\..\VS\GeographicLib-1.49\windows\NetGeographic\NetGeographic.vcxproj">
+      <Project>{024b4d0d-da73-42ea-9ed8-6c1ed7cf6f44}</Project>
+      <Name>NetGeographic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpMap\SharpMap.csproj">
       <Project>{C83777FC-AABB-47D9-911F-D76255D4D541}</Project>
       <Name>SharpMap</Name>
