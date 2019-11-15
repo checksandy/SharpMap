@@ -508,6 +508,25 @@ namespace SharpMap.Forms
             set { _zoomToPointer = value; }
         }
 
+
+        /// <summary>
+        /// Create Geometry of Specified Type provided PointArray
+        /// </summary>
+        public void DefineLinearGeometry(List<Coordinate> _pD)
+        {
+            if (GeometryDefined != null)
+            {
+                if (_pD != null)
+                {
+                    if (_pD.Count > 1)
+                    {
+                        var cl = new NetTopologySuite.Geometries.CoordinateList(_pD, false);
+                        GeometryDefined(Map.Factory.CreateLineString(NetTopologySuite.Geometries.CoordinateArrays.AtLeastNCoordinatesOrNothing(2, cl.ToCoordinateArray())));
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Sets ActiveTool to None (and changing cursor) while redrawing the map
         /// </summary>

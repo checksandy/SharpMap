@@ -1,36 +1,36 @@
-﻿using GeoAPI.Geometries;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
+using GeoAPI.Geometries;
 
 namespace SharpMap.Forms.Tools
 {
     /// <summary>
-    /// Distance Measurement
+    /// Area Measurement
     /// </summary>
-    public class DistanceMeasureTool: MapTool
+    public class AreaMeasureTool : MapTool
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public DistanceMeasureTool(MapBox pMB)
-            : base("DistanceMeasureTool", "A tool to measure distance")
+        public AreaMeasureTool(MapBox pMB)
+            : base("AreaMeasureTool", "A tool to measure area")
         {
             MB = pMB;
             Map = MB.Map;
         }
-
+        
         /// <summary>
         /// Map Box Handle
         /// </summary>
         public MapBox MB;
-        
+
         byte lMPause = 0;
         private List<Coordinate> _pointArray = new List<Coordinate>();
-        private frm_Distance f_dist;
+        private frm_Area f_area;
         private Point _dragStartPoint;
         private Point _dragEndPoint;
 
@@ -46,29 +46,29 @@ namespace SharpMap.Forms.Tools
             {
                 _dragStartPoint = e.Location;
                 _dragEndPoint = e.Location;
-                if (lMPause>=1)
+                if (lMPause >= 1)
                 {
                     _pointArray.Clear();
-                    f_dist.ClearValues();
+                    f_area.ClearValues();
                     MB.Invalidate(new Region(MB.ClientRectangle));
                     lMPause = 0;
                 }
             }
-            else if (e.Button==MouseButtons.Right)
+            else if (e.Button == MouseButtons.Right)
             {
-                if (_pointArray.Count>2)
+                if (_pointArray.Count > 3)
                 {
                     _pointArray.RemoveAt(_pointArray.Count - 1);
-                    f_dist.SetForAdd();
+                    f_area.SetForAdd();
                     MB.Invalidate(new Region(MB.ClientRectangle));
-                } 
+                }
                 else
                 {
-                    f_dist.ClearValues();
+                    f_area.ClearValues();
                     _pointArray.Clear();
                     MB.Invalidate(new Region(MB.ClientRectangle));
                 }
-                lMPause += 1;                
+                lMPause += 1;
             }
             return false;
         }
@@ -81,11 +81,11 @@ namespace SharpMap.Forms.Tools
         /// <returns><value>true</value> if the action was handled and <b>no</b> other action should be taken</returns>
         public override bool DoMouseUp(Coordinate mapPosition, MouseEventArgs mouseEventArgs)
         {
-            if (lMPause==1)
+            if (lMPause == 1)
                 lMPause += 1;
-            else if (lMPause==2)
+            else if (lMPause == 2)
             {
-                f_dist.ClearValues();
+                f_area.ClearValues();
                 _pointArray.Clear();
                 lMPause = 0;
             }
@@ -95,23 +95,23 @@ namespace SharpMap.Forms.Tools
                 {
                     _pointArray = new List<Coordinate>(2);
                     _pointArray.Add(mapPosition);
-                    f_dist.UpdateCoordinate(mapPosition, true);
+                    f_area.UpdateCoordinate(mapPosition, true);
                     _pointArray.Add(mapPosition);
-                    f_dist.UpdateCoordinate(mapPosition, true);
+                    f_area.UpdateCoordinate(mapPosition, true);
                 }
-                else if (_pointArray.Count==0)
+                else if (_pointArray.Count == 0)
                 {
                     _pointArray = new List<Coordinate>(2);
                     _pointArray.Add(mapPosition);
-                    f_dist.UpdateCoordinate(mapPosition, true);
+                    f_area.UpdateCoordinate(mapPosition, true);
                     _pointArray.Add(mapPosition);
-                    f_dist.UpdateCoordinate(mapPosition, true);
+                    f_area.UpdateCoordinate(mapPosition, true);
                 }
                 else
                 {
                     //var temp = new Coordinate[_pointArray.Count + 2];
                     _pointArray.Add(mapPosition);
-                    f_dist.UpdateCoordinate(mapPosition, true);
+                    f_area.UpdateCoordinate(mapPosition, true);
                 }
             }
             return false;
@@ -126,7 +126,7 @@ namespace SharpMap.Forms.Tools
             //Draws current line or polygon (Draw Line or Draw Polygon tool)
             if (_pointArray != null)
             {
-                if (_pointArray.Count>1)
+                if (_pointArray.Count > 1)
                 {
                     if (_pointArray.Count == 2)
                     {
@@ -140,12 +140,17 @@ namespace SharpMap.Forms.Tools
                         for (int i = 0; i < pts.Length; i++)
                             pts[i] = Map.WorldToImage(_pointArray[i]);
                         if (pts.Length > 0)
-                            e.Graphics.DrawLines(new Pen(Color.YellowGreen, 2F), pts);
+                        {
+                            Color c = Color.FromArgb(127, Color.Gray);
+                            e.Graphics.FillPolygon(new SolidBrush(c), pts);
+                            e.Graphics.DrawPolygon(new Pen(Color.Gray, 2F), pts);
+                        }
+                        //e.Graphics.DrawLines(new Pen(Color.YellowGreen, 2F), pts);
                     }
-                    for (int i=0;i<_pointArray.Count-1;i++)
+                    for (int i = 0; i < _pointArray.Count - 1; i++)
                     {
-                        PointF curpts= Map.WorldToImage(_pointArray[i]);
-                        e.Graphics.DrawEllipse(new Pen(Color.Red, 2F), new Rectangle((int)curpts.X-2,(int)curpts.Y-2,4,4));
+                        PointF curpts = Map.WorldToImage(_pointArray[i]);
+                        e.Graphics.DrawEllipse(new Pen(Color.Red, 2F), new Rectangle((int)curpts.X - 2, (int)curpts.Y - 2, 4, 4));
                     }
                 }
             }
@@ -161,17 +166,16 @@ namespace SharpMap.Forms.Tools
             {
                 base.Cursor = Cursors.Cross;
                 if (_pointArray != null) _pointArray.Clear();
-                f_dist = new frm_Distance(this);
-                f_dist.Show(MB);
+                f_area = new frm_Area(this);
+                f_area.Show(MB);
             }
             else
             {
                 MB.Invalidate(new Region(MB.ClientRectangle));
-                if (f_dist != null) f_dist.Close();
+                if (f_area != null) f_area.Close();
                 if (_pointArray != null) _pointArray.Clear();
-                f_dist = null;
+                f_area = null;
                 lMPause = 0;
-                //base.Cursor = Cursors.Default;
             }
         }
 
@@ -197,12 +201,12 @@ namespace SharpMap.Forms.Tools
             _dragEndPoint = new Point(0, 0);
             if (_pointArray != null)
             {
-                if (lMPause==0)
+                if (lMPause == 0)
                 {
                     if (_pointArray.Count > 1)
                     {
                         _pointArray[_pointArray.Count - 1] = mapPosition;
-                        f_dist.UpdateCoordinate(mapPosition, false);
+                        f_area.UpdateCoordinate(mapPosition, false);
                         //_rectangle = GenerateRectangle(_dragStartPoint, ClipPoint(e.Location));
                         MB.Invalidate(new Region(MB.ClientRectangle));
                     }
@@ -221,5 +225,4 @@ namespace SharpMap.Forms.Tools
             lMPause = 0;
         }
     }
-
 }
